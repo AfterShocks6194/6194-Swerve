@@ -65,6 +65,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DrivetrainSubsystem m_drivetrainSubsystem = new DrivetrainSubsystem();
   private final Joystick m_controller = new Joystick(0);
+  private final XboxController controller = new XboxController(1);
   
   private final IntakeSubsystem intakes = IntakeSubsystem.getInstance();
   private final ShooterSubsystem shooter = ShooterSubsystem.getInstance();
@@ -87,9 +88,18 @@ public class RobotContainer {
     // THE SWITCH TO ROBOT ORIENTED DRIVING IS LOCATED IN DEFAULTDRIVECOMMAND.JAVA
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
         m_drivetrainSubsystem,
-        () -> -modifyAxis(m_controller.getY() * .8) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getX() * .8) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getTwist() * .5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+        () -> -modifyAxis(controller.getLeftY()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(controller.getRightX()) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(controller.getLeftX()*.9) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
+
+
+
+        //This is the unmodified Joystick COntrol below
+        // m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
+        //   m_drivetrainSubsystem,
+        //   () -> -modifyAxis(m_controller.getY() * .5) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        //   () -> -modifyAxis(m_controller.getX() * .5) * DrivetrainSubsystem.MAX_VELOCITY_METERS_PER_SECOND,
+        //   () -> -modifyAxis(m_controller.getTwist() * .5) * DrivetrainSubsystem.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
 
     // Configure the button bindings  
     configureButtonBindings();
@@ -239,7 +249,7 @@ return new SequentialCommandGroup(
 
   private static double modifyAxis(double value) {
     // Deadband
-    value = deadband(value, 0.2);
+    value = deadband(value, 0.1);
 
     // Square the axis
     value = Math.copySign(value * value, value);
